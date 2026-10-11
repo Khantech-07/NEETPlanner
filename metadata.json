@@ -1,0 +1,6 @@
+{
+  "name": "NEET Planner",
+  "description": "Comprehensive NEET daily study planner, chapter schedule, and question practice tracker with milestone highlights and progress dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
