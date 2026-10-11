@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>NEET 2026 Master Study Planner</title>
+  <meta name="theme-color" content="#0a0f1d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    :root {
+      --bg: #0a0f1d;
+      --surface: #131d31;
+      --surface-variant: #1a2742;
+      --surface-card: #141f36;
+      --outline: #253554;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --physics: #00e5ff;
+      --physics-bg: rgba(0, 229, 255, 0.12);
+      --chemistry: #ff7a59;
+      --chemistry-bg: rgba(255, 122, 89, 0.12);
+      --biology: #10b981;
+      --biology-bg: rgba(16, 185, 129, 0.12);
+      --mock: #ffb703;
+      --mock-bg: rgba(255, 183, 3, 0.12);
+      --milestone: #b388ff;
+      --milestone-gold: #ffc107;
+      
+      --radius: 14px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      padding-bottom: calc(40px + var(--safe-bottom));
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Sticky Top Dashboard */
+    header.dashboard-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 15, 29, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--outline);
+      padding: calc(12px + var(--safe-top)) 16px 12px 16px;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, var(--physics), var(--biology));
+      color: #000;
+      font-weight: 900;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+
+    .brand-title h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .brand-title p {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .btn-icon {
+      background: var(--surface-variant);
+      border: 1px solid var(--outline);
+      color: var(--text-muted);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 8px;
+    }
+
+    .stat-large {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--physics);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-dim);
+      margin-bottom: 2px;
+    }
+
+    .stat-counts {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .stat-questions {
+      font-size: 11px;
+      color: var(--chemistry);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: var(--surface-variant);
+      border-radius: 100px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--physics), var(--biology));
+      border-radius: 100px;
+      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Search & Filter Bar */
+    .controls-panel {
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--outline);
+      border-radius: 12px;
+      padding: 11px 40px 11px 36px;
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--physics);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--physics);
+      pointer-events: none;
+      font-size: 14px;
+    }
+
+    .clear-search-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px 8px;
+      display: none;
+    }
+
+    /* Filter Chips */
+    .filter-chips {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .filter-chips::-webkit-scrollbar { display: none; }
+
+    .chip {
+      background: var(--surface);
+      border: 1px solid var(--outline);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip.active {
+      background: rgba(0, 229, 255, 0.15);
+      border-color: var(--physics);
+      color: var(--physics);
+      font-weight: 700;
+    }
+    .chip.chip-chem.active {
+      background: rgba(255, 122, 89, 0.15);
+      border-color: var(--chemistry);
+      color: var(--chemistry);
+    }
+    .chip.chip-bio.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--biology);
+      color: var(--biology);
+    }
+    .chip.chip-milestone.active {
+      background: rgba(179, 136, 255, 0.2);
+      border-color: var(--milestone);
+      color: var(--milestone);
+    }
+
+    /* Subject Breakdown Row */
+    .subject-breakdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 0 16px 12px 16px;
+    }
+
+    .mini-subject-card {
+      background: var(--surface);
+      border: 1px solid var(--outline);
+      border-radius: 10px;
+      padding: 8px 6px;
+      text-align: center;
+    }
+
+    .mini-subject-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .mini-subject-value {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 2px 0;
+    }
+
+    .mini-subject-sub {
+      font-size: 9px;
+      color: var(--text-dim);
+    }
+
+    /* Main Container */
+    main.task-feed {
+      padding: 0 16px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* Date Group & Sticky Header */
+    .date-group {
+      margin-bottom: 20px;
+    }
+
+    .date-header {
+      position: sticky;
+      top: 135px;
+      z-index: 50;
+      background: rgba(10, 15, 29, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 8px 10px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      border-left: 3px solid var(--physics);
+    }
+
+    .date-header-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .date-header-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--surface-variant);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* Task Card */
+    .task-card {
+      background: var(--surface-card);
+      border: 1px solid var(--outline);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 10px;
+      transition: border-color 0.2s, background-color 0.2s;
+      position: relative;
+    }
+
+    .task-card.completed {
+      opacity: 0.75;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    /* Milestone Card Highlight (22 Nov 2026) */
+    .task-card.is-milestone {
+      background: linear-gradient(145deg, #181428, #1d1830);
+      border: 2px solid var(--milestone-gold);
+      box-shadow: 0 0 20px rgba(255, 193, 7, 0.25);
+    }
+
+    .milestone-banner {
+      background: linear-gradient(90deg, rgba(255, 193, 7, 0.25), rgba(179, 136, 255, 0.25));
+      border: 1px solid var(--milestone-gold);
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--milestone-gold);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .task-top-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    /* Custom Checkbox */
+    .checkbox-wrap {
+      padding-top: 2px;
+      cursor: pointer;
+    }
+
+    .custom-checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--text-dim);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .custom-checkbox.checked {
+      background: var(--biology);
+      border-color: var(--biology);
+    }
+
+    .custom-checkbox svg {
+      width: 14px;
+      height: 14px;
+      stroke: #000;
+      stroke-width: 3;
+      fill: none;
+      display: none;
+    }
+
+    .custom-checkbox.checked svg {
+      display: block;
+    }
+
+    .task-info {
+      flex: 1;
+    }
+
+    .subject-pill {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+
+    .pill-physics {
+      background: var(--physics-bg);
+      color: var(--physics);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+    }
+
+    .pill-chemistry {
+      background: var(--chemistry-bg);
+      color: var(--chemistry);
+      border: 1px solid rgba(255, 122, 89, 0.3);
+    }
+
+    .pill-biology {
+      background: var(--biology-bg);
+      color: var(--biology);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .pill-mock {
+      background: var(--mock-bg);
+      color: var(--mock);
+      border: 1px solid rgba(255, 183, 3, 0.3);
+    }
+
+    .task-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    .task-card.completed .task-title {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .task-notes {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      background: rgba(26, 39, 66, 0.5);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border-left: 2px solid var(--outline);
+    }
+
+    /* Bottom Row: Question Target & Counter Controls */
+    .task-bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(37, 53, 84, 0.6);
+    }
+
+    .target-tag {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .target-tag b {
+      color: var(--text-main);
+    }
+
+    .counter-control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-step {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface-variant);
+      border: 1px solid var(--outline);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    .btn-step:active {
+      background: var(--physics);
+      color: #000;
+    }
+
+    .question-input {
+      width: 46px;
+      height: 28px;
+      background: var(--surface);
+      border: 1px solid var(--outline);
+      border-radius: 6px;
+      text-align: center;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .question-input:focus {
+      border-color: var(--physics);
+    }
+
+    .target-denom {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: calc(20px + var(--safe-bottom));
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--surface-variant);
+      border: 1px solid var(--physics);
+      color: var(--text-main);
+      padding: 10px 18px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Top Header & Progress Dashboard -->
+  <header class="dashboard-header">
+    <div class="brand-row">
+      <div class="brand-logo">
+        <div class="brand-badge">NEET</div>
+        <div class="brand-title">
+          <h1>NEET 2026 Master Planner</h1>
+          <p>81-Day Full Countdown Schedule</p>
+        </div>
+      </div>
+      <button class="btn-icon" id="reset-btn" title="Reset all saved progress">
+        ↻ Reset
+      </button>
+    </div>
+
+    <div class="progress-stats">
+      <div>
+        <div class="stat-label">Syllabus Completed</div>
+        <div class="stat-large" id="percent-display">0.0%</div>
+      </div>
+      <div class="stat-counts">
+        <div id="tasks-done-display">0 / 112 Tasks</div>
+        <div class="stat-questions" id="questions-done-display">0 / 2,450 Qs Practiced</div>
+      </div>
+    </div>
+
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progress-bar-fill"></div>
+    </div>
+  </header>
+
+  <!-- Search & Filter Controls -->
+  <section class="controls-panel">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" class="search-input" placeholder="Search chapter or subject (Physics, Chem, Bio)..." autocomplete="off">
+      <button id="clear-search-btn" class="clear-search-btn">✕</button>
+    </div>
+
+    <div class="filter-chips">
+      <button class="chip active" data-filter="all">All Days</button>
+      <button class="chip" data-filter="Physics">Physics</button>
+      <button class="chip chip-chem" data-filter="Chemistry">Chemistry</button>
+      <button class="chip chip-bio" data-filter="Biology">Biology</button>
+      <button class="chip" data-filter="Mock Test">Mock Tests</button>
+      <button class="chip chip-milestone" data-filter="milestone">⭐ 22 Nov Milestone</button>
+      <button class="chip" data-filter="pending">Pending</button>
+      <button class="chip" data-filter="completed">Completed</button>
+    </div>
+  </section>
+
+  <!-- Mini Subject Cards -->
+  <section class="subject-breakdown">
+    <div class="mini-subject-card">
+      <div class="mini-subject-title" style="color: var(--physics);">Physics</div>
+      <div class="mini-subject-value" id="phy-val">0%</div>
+      <div class="mini-subject-sub" id="phy-count">0/32</div>
+    </div>
+    <div class="mini-subject-card">
+      <div class="mini-subject-title" style="color: var(--chemistry);">Chemistry</div>
+      <div class="mini-subject-value" id="chem-val">0%</div>
+      <div class="mini-subject-sub" id="chem-count">0/26</div>
+    </div>
+    <div class="mini-subject-card">
+      <div class="mini-subject-title" style="color: var(--biology);">Biology</div>
+      <div class="mini-subject-value" id="bio-val">0%</div>
+      <div class="mini-subject-sub" id="bio-count">0/33</div>
+    </div>
+    <div class="mini-subject-card">
+      <div class="mini-subject-title" style="color: var(--mock);">Mock Tests</div>
+      <div class="mini-subject-value" id="mock-val">0%</div>
+      <div class="mini-subject-sub" id="mock-count">0/21</div>
+    </div>
+  </section>
+
+  <!-- Task Feed -->
+  <main class="task-feed" id="task-feed">
+    <!-- Populated dynamically by JavaScript -->
+  </main>
+
+  <div class="toast" id="toast">Progress saved!</div>
+
+  <!-- Complete 81-Day Study Schedule Dataset & Interactive Controller -->
+  <script>
+    // Complete 81-Day parsed dataset from all screenshots
+    const scheduleData = [
+      // Week 1: 12–18 October
+      { id: 1, week: "12–18 October", dateLabel: "Mon 12", fullDate: "Mon, 12 Oct 2026", subject: "Physics", chapter: "Mathematical Tools", notes: "", targetQ: 25 },
+      { id: 2, week: "12–18 October", dateLabel: "Mon 12", fullDate: "Mon, 12 Oct 2026", subject: "Biology", chapter: "The Living World", notes: "current NCERT only", targetQ: 30 },
+      { id: 3, week: "12–18 October", dateLabel: "Tue 13", fullDate: "Tue, 13 Oct 2026", subject: "Chemistry", chapter: "Some Basic Concepts", notes: "Mole, stoichiometry, limiting reagent, molarity, molality, mole fraction", targetQ: 30 },
+      { id: 4, week: "12–18 October", dateLabel: "Wed 14", fullDate: "Wed, 14 Oct 2026", subject: "Biology", chapter: "Cell", notes: "", targetQ: 40 },
+      { id: 5, week: "12–18 October", dateLabel: "Wed 14", fullDate: "Wed, 14 Oct 2026", subject: "Biology", chapter: "Structural Organisation", notes: "tissues + frog. Long day", targetQ: 35 },
+      { id: 6, week: "12–18 October", dateLabel: "Thu 15", fullDate: "Thu, 15 Oct 2026", subject: "Mock Test", chapter: "Yakeen NEET-1", notes: "Official paper", targetQ: 0 },
+      { id: 7, week: "12–18 October", dateLabel: "Fri 16", fullDate: "Fri, 16 Oct 2026", subject: "Physics", chapter: "Vectors and Units and Measurements", notes: "25 + 20 question target", targetQ: 45 },
+      { id: 8, week: "12–18 October", dateLabel: "Sat 17", fullDate: "Sat, 17 Oct 2026", subject: "Mock Test", chapter: "NRTS 01", notes: "Official paper", targetQ: 0 },
+      { id: 9, week: "12–18 October", dateLabel: "Sun 18", fullDate: "Sun, 18 Oct 2026", subject: "Physics", chapter: "Motion in a Straight Line", notes: "", targetQ: 25 },
+      { id: 10, week: "12–18 October", dateLabel: "Sun 18", fullDate: "Sun, 18 Oct 2026", subject: "Chemistry", chapter: "Redox", notes: "", targetQ: 25 },
+
+      // Week 2: 19–25 October
+      { id: 11, week: "19–25 October", dateLabel: "Mon 19", fullDate: "Mon, 19 Oct 2026", subject: "Mock Test", chapter: "Yakeen NEET-2", notes: "Official paper", targetQ: 0 },
+      { id: 12, week: "19–25 October", dateLabel: "Tue 20", fullDate: "Tue, 20 Oct 2026", subject: "Chemistry", chapter: "Solutions", notes: "", targetQ: 25 },
+      { id: 13, week: "19–25 October", dateLabel: "Tue 20", fullDate: "Tue, 20 Oct 2026", subject: "Biology", chapter: "Cell Cycle and Cell Division", notes: "", targetQ: 35 },
+      { id: 14, week: "19–25 October", dateLabel: "Wed 21", fullDate: "Wed, 21 Oct 2026", subject: "Mock Test", chapter: "Yakeen Rank Booster 1", notes: "Official paper", targetQ: 0 },
+      { id: 15, week: "19–25 October", dateLabel: "Thu 22", fullDate: "Thu, 22 Oct 2026", subject: "Chemistry", chapter: "Thermodynamics and Thermochemistry", notes: "Hess, entropy, Gibbs", targetQ: 30 },
+      { id: 16, week: "19–25 October", dateLabel: "Fri 23", fullDate: "Fri, 23 Oct 2026", subject: "Biology", chapter: "Breathing and Exchange of Gases", notes: "", targetQ: 40 },
+      { id: 17, week: "19–25 October", dateLabel: "Fri 23", fullDate: "Fri, 23 Oct 2026", subject: "Chemistry", chapter: "Chemical Equilibrium", notes: "", targetQ: 25 },
+      { id: 18, week: "19–25 October", dateLabel: "Sat 24", fullDate: "Sat, 24 Oct 2026", subject: "Mock Test", chapter: "Yakeen NEET-3", notes: "Official paper", targetQ: 0 },
+      { id: 19, week: "19–25 October", dateLabel: "Sun 25", fullDate: "Sun, 25 Oct 2026", subject: "Physics", chapter: "Motion in a Plane", notes: "Projectile and uniform circular motion", targetQ: 30 },
+
+      // Week 3: 26 October – 1 November
+      { id: 20, week: "26 October – 1 November", dateLabel: "Mon 26", fullDate: "Mon, 26 Oct 2026", subject: "Biology", chapter: "Biological Classification", notes: "Heaviest double of October", targetQ: 35 },
+      { id: 21, week: "26 October – 1 November", dateLabel: "Mon 26", fullDate: "Mon, 26 Oct 2026", subject: "Biology", chapter: "Body Fluids and Circulation", notes: "Heaviest double of October", targetQ: 35 },
+      { id: 22, week: "26 October – 1 November", dateLabel: "Tue 27", fullDate: "Tue, 27 Oct 2026", subject: "Mock Test", chapter: "NRTS 02", notes: "Official paper", targetQ: 0 },
+      { id: 23, week: "26 October – 1 November", dateLabel: "Wed 28", fullDate: "Wed, 28 Oct 2026", subject: "Chemistry", chapter: "Ionic Equilibrium", notes: "pH, buffers, Ksp, hydrolysis", targetQ: 30 },
+      { id: 24, week: "26 October – 1 November", dateLabel: "Thu 29", fullDate: "Thu, 29 Oct 2026", subject: "Mock Test", chapter: "Yakeen NEET-4", notes: "Official paper", targetQ: 0 },
+      { id: 25, week: "26 October – 1 November", dateLabel: "Fri 30", fullDate: "Fri, 30 Oct 2026", subject: "Chemistry", chapter: "Electrochemistry", notes: "Conductance, Nernst, Faraday", targetQ: 30 },
+      { id: 26, week: "26 October – 1 November", dateLabel: "Sat 31", fullDate: "Sat, 31 Oct 2026", subject: "Mock Test", chapter: "NRTS 03", notes: "Official paper", targetQ: 0 },
+      { id: 27, week: "26 October – 1 November", dateLabel: "Sun 1 Nov", fullDate: "Sun, 01 Nov 2026", subject: "Physics", chapter: "Laws of Motion", notes: "FBD, friction, banking. Cockroach account only if your AITS module still asks it", targetQ: 30 },
+
+      // Week 4: 2–8 November
+      { id: 28, week: "2–8 November", dateLabel: "Mon 2", fullDate: "Mon, 02 Nov 2026", subject: "Mock Test", chapter: "Yakeen AITS-1", notes: "Official paper", targetQ: 0 },
+      { id: 29, week: "2–8 November", dateLabel: "Tue 3", fullDate: "Tue, 03 Nov 2026", subject: "Chemistry", chapter: "Chemical Kinetics", notes: "", targetQ: 25 },
+      { id: 30, week: "2–8 November", dateLabel: "Tue 3", fullDate: "Tue, 03 Nov 2026", subject: "Biology", chapter: "Plant Kingdom", notes: "", targetQ: 40 },
+      { id: 31, week: "2–8 November", dateLabel: "Wed 4", fullDate: "Wed, 04 Nov 2026", subject: "Mock Test", chapter: "Yakeen Rank Booster 2", notes: "Official paper", targetQ: 0 },
+      { id: 32, week: "2–8 November", dateLabel: "Thu 5", fullDate: "Thu, 05 Nov 2026", subject: "Biology", chapter: "Excretory Products", notes: "", targetQ: 40 },
+      { id: 33, week: "2–8 November", dateLabel: "Fri 6", fullDate: "Fri, 06 Nov 2026", subject: "Mock Test", chapter: "NRTS 04", notes: "Official paper", targetQ: 0 },
+      { id: 34, week: "2–8 November", dateLabel: "Sat 7", fullDate: "Sat, 07 Nov 2026", subject: "Chemistry", chapter: "Structure of Atom", notes: "", targetQ: 25 },
+      { id: 35, week: "2–8 November", dateLabel: "Sat 7", fullDate: "Sat, 07 Nov 2026", subject: "Biology", chapter: "Locomotion and Movement", notes: "", targetQ: 40 },
+      { id: 36, week: "2–8 November", dateLabel: "Sun 8", fullDate: "Sun, 08 Nov 2026", subject: "Biology", chapter: "Morphology", notes: "Only the families still printed in your book", targetQ: 45 },
+
+      // Week 5: 9–15 November
+      { id: 37, week: "9–15 November", dateLabel: "Mon 9", fullDate: "Mon, 09 Nov 2026", subject: "Mock Test", chapter: "NRTS 05", notes: "Official paper", targetQ: 0 },
+      { id: 38, week: "9–15 November", dateLabel: "Tue 10", fullDate: "Tue, 10 Nov 2026", subject: "Physics", chapter: "Work, Energy and Power", notes: "", targetQ: 30 },
+      { id: 39, week: "9–15 November", dateLabel: "Wed 11", fullDate: "Wed, 11 Nov 2026", subject: "Mock Test", chapter: "NRTS 06", notes: "Official paper", targetQ: 0 },
+      { id: 40, week: "9–15 November", dateLabel: "Thu 12", fullDate: "Thu, 12 Nov 2026", subject: "Physics", chapter: "Centre of Mass", notes: "Morning mechanics", targetQ: 25 },
+      { id: 41, week: "9–15 November", dateLabel: "Thu 12", fullDate: "Thu, 12 Nov 2026", subject: "Biology", chapter: "Chemical Coordination", notes: "Afternoon hormone table", targetQ: 40 },
+      { id: 42, week: "9–15 November", dateLabel: "Fri 13", fullDate: "Fri, 13 Nov 2026", subject: "Mock Test", chapter: "Yakeen NEET-5", notes: "Official paper", targetQ: 0 },
+      { id: 43, week: "9–15 November", dateLabel: "Sat 14", fullDate: "Sat, 14 Nov 2026", subject: "Physics", chapter: "Rotational Motion", notes: "Torque, moment of inertia, rolling", targetQ: 30 },
+      { id: 44, week: "9–15 November", dateLabel: "Sun 15", fullDate: "Sun, 15 Nov 2026", subject: "Mock Test", chapter: "Yakeen AITS-2", notes: "Official paper", targetQ: 0 },
+
+      // Week 6: 16–22 November
+      { id: 45, week: "16–22 November", dateLabel: "Mon 16", fullDate: "Mon, 16 Nov 2026", subject: "Chemistry", chapter: "Periodicity", notes: "", targetQ: 25 },
+      { id: 46, week: "16–22 November", dateLabel: "Mon 16", fullDate: "Mon, 16 Nov 2026", subject: "Biology", chapter: "Anatomy of Flowering Plants", notes: "", targetQ: 40 },
+      { id: 47, week: "16–22 November", dateLabel: "Tue 17", fullDate: "Tue, 17 Nov 2026", subject: "Biology", chapter: "Neural Control", notes: "Neuron, impulse, synapse, brain, eye, ear", targetQ: 45 },
+      { id: 48, week: "16–22 November", dateLabel: "Wed 18", fullDate: "Wed, 18 Nov 2026", subject: "Mock Test", chapter: "NRTS 07", notes: "Official paper", targetQ: 0 },
+      { id: 49, week: "16–22 November", dateLabel: "Thu 19", fullDate: "Thu, 19 Nov 2026", subject: "Physics", chapter: "Gravitation", notes: "", targetQ: 30 },
+      { id: 50, week: "16–22 November", dateLabel: "Fri 20", fullDate: "Fri, 20 Nov 2026", subject: "Chemistry", chapter: "Chemical Bonding", notes: "VSEPR, hybridisation, MOT of O2 and N2", targetQ: 30 },
+      { id: 51, week: "16–22 November", dateLabel: "Sat 21", fullDate: "Sat, 21 Nov 2026", subject: "Physics", chapter: "Mechanical Properties of Solids", notes: "Last new work before the paper", targetQ: 25 },
+      { id: 52, week: "16–22 November", dateLabel: "Sat 21", fullDate: "Sat, 21 Nov 2026", subject: "Biology", chapter: "Respiration in Plants", notes: "Last new work before the paper", targetQ: 40 },
+      // 22 NOVEMBER KEY MILESTONE
+      { id: 53, week: "16–22 November", dateLabel: "Sun 22", fullDate: "Sun, 22 Nov 2026", subject: "Mock Test", chapter: "NRTS 08 • Phase-1 Major Milestone", notes: "Major Milestone Paper! Phase-1 Complete. Nothing new.", targetQ: 0, isMilestone: true },
+
+      // Week 7: 23–29 November
+      { id: 54, week: "23–29 November", dateLabel: "Mon 23", fullDate: "Mon, 23 Nov 2026", subject: "Physics", chapter: "Fluids", notes: "No exam, so Sunday has a gap", targetQ: 25 },
+      { id: 55, week: "23–29 November", dateLabel: "Tue 24", fullDate: "Tue, 24 Nov 2026", subject: "Mock Test", chapter: "Yakeen NEET-6", notes: "Same syllabus as NRTS 08", targetQ: 0 },
+      { id: 56, week: "23–29 November", dateLabel: "Wed 25", fullDate: "Wed, 25 Nov 2026", subject: "Chemistry", chapter: "IUPAC Nomenclature Only", notes: "", targetQ: 30 },
+      { id: 57, week: "23–29 November", dateLabel: "Thu 26", fullDate: "Thu, 26 Nov 2026", subject: "Biology", chapter: "Photosynthesis", notes: "Light reaction, then C3, C4, CAM, photorespiration. Two sittings", targetQ: 40 },
+      { id: 58, week: "23–29 November", dateLabel: "Fri 27", fullDate: "Fri, 27 Nov 2026", subject: "Biology", chapter: "Animal Kingdom", notes: "Non-chordates, then chordates. One chapter", targetQ: 45 },
+      { id: 59, week: "23–29 November", dateLabel: "Sat 28", fullDate: "Sat, 28 Nov 2026", subject: "Physics", chapter: "Thermal Properties of Matter", notes: "", targetQ: 25 },
+      { id: 60, week: "23–29 November", dateLabel: "Sun 29", fullDate: "Sun, 29 Nov 2026", subject: "Mock Test", chapter: "NRTS 09", notes: "Official paper", targetQ: 0 },
+
+      // Week 8: 30 November – 6 December
+      { id: 61, week: "30 November – 6 December", dateLabel: "Mon 30", fullDate: "Mon, 30 Nov 2026", subject: "Physics", chapter: "Kinetic Theory", notes: "", targetQ: 25 },
+      { id: 62, week: "30 November – 6 December", dateLabel: "Mon 30", fullDate: "Mon, 30 Nov 2026", subject: "Chemistry", chapter: "Isomerism", notes: "", targetQ: 30 },
+      { id: 63, week: "30 November – 6 December", dateLabel: "Tue 1 Dec", fullDate: "Tue, 01 Dec 2026", subject: "Physics", chapter: "Thermodynamics", notes: "", targetQ: 30 },
+      { id: 64, week: "30 November – 6 December", dateLabel: "Wed 2 Dec", fullDate: "Wed, 02 Dec 2026", subject: "Biology", chapter: "Biomolecules", notes: "", targetQ: 40 },
+      { id: 65, week: "30 November – 6 December", dateLabel: "Thu 3 Dec", fullDate: "Thu, 03 Dec 2026", subject: "Biology", chapter: "Plant Growth and Development", notes: "", targetQ: 40 },
+      { id: 66, week: "30 November – 6 December", dateLabel: "Thu 3 Dec", fullDate: "Thu, 03 Dec 2026", subject: "Biology", chapter: "Reproductive Health", notes: "", targetQ: 35 },
+      { id: 67, week: "30 November – 6 December", dateLabel: "Fri 4 Dec", fullDate: "Fri, 04 Dec 2026", subject: "Chemistry", chapter: "GOC", notes: "Inductive, resonance, hyperconjugation, intermediates, reaction types", targetQ: 30 },
+      { id: 68, week: "30 November – 6 December", dateLabel: "Sat 5 Dec", fullDate: "Sat, 05 Dec 2026", subject: "Physics", chapter: "Oscillations", notes: "", targetQ: 30 },
+      { id: 69, week: "30 November – 6 December", dateLabel: "Sat 5 Dec", fullDate: "Sat, 05 Dec 2026", subject: "Chemistry", chapter: "Hydrocarbons", notes: "", targetQ: 30 },
+      { id: 70, week: "30 November – 6 December", dateLabel: "Sun 6 Dec", fullDate: "Sun, 06 Dec 2026", subject: "Mock Test", chapter: "Yakeen Rank Booster 3", notes: "Phase-1 chapters only", targetQ: 0 },
+
+      // Week 9: 7–13 December
+      { id: 71, week: "7–13 December", dateLabel: "Mon 7", fullDate: "Mon, 07 Dec 2026", subject: "Physics", chapter: "Waves", notes: "", targetQ: 30 },
+      { id: 72, week: "7–13 December", dateLabel: "Mon 7", fullDate: "Mon, 07 Dec 2026", subject: "Chemistry", chapter: "Haloalkanes and Haloarenes", notes: "", targetQ: 30 },
+      { id: 73, week: "7–13 December", dateLabel: "Tue 8", fullDate: "Tue, 08 Dec 2026", subject: "Biology", chapter: "Human Reproduction", notes: "", targetQ: 45 },
+      { id: 74, week: "7–13 December", dateLabel: "Wed 9", fullDate: "Wed, 09 Dec 2026", subject: "Biology", chapter: "Sexual Reproduction in Flowering Plants", notes: "", targetQ: 40 },
+      { id: 75, week: "7–13 December", dateLabel: "Wed 9", fullDate: "Wed, 09 Dec 2026", subject: "Chemistry", chapter: "Alcohols, Phenols and Ethers", notes: "", targetQ: 30 },
+      { id: 76, week: "7–13 December", dateLabel: "Thu 10", fullDate: "Thu, 10 Dec 2026", subject: "Physics", chapter: "Electric Charges and Fields", notes: "", targetQ: 25 },
+      { id: 77, week: "7–13 December", dateLabel: "Thu 10", fullDate: "Thu, 10 Dec 2026", subject: "Biology", chapter: "Evolution", notes: "", targetQ: 40 },
+      { id: 78, week: "7–13 December", dateLabel: "Fri 11", fullDate: "Fri, 11 Dec 2026", subject: "Physics", chapter: "Potential and Capacitance", notes: "", targetQ: 30 },
+      { id: 79, week: "7–13 December", dateLabel: "Fri 11", fullDate: "Fri, 11 Dec 2026", subject: "Biology", chapter: "Microbes in Human Welfare", notes: "", targetQ: 40 },
+      { id: 80, week: "7–13 December", dateLabel: "Sat 12", fullDate: "Sat, 12 Dec 2026", subject: "Biology", chapter: "Principles of Inheritance", notes: "Mendel, linkage, disorders, pedigree", targetQ: 45 },
+      { id: 81, week: "7–13 December", dateLabel: "Sun 13", fullDate: "Sun, 13 Dec 2026", subject: "Mock Test", chapter: "NRTS 10", notes: "Official paper", targetQ: 0 },
+
+      // Week 10: 14–20 December
+      { id: 82, week: "14–20 December", dateLabel: "Mon 14", fullDate: "Mon, 14 Dec 2026", subject: "Physics", chapter: "Current Electricity", notes: "NRTS 10 errors first. Ohm, Kirchhoff, Wheatstone, potentiometer", targetQ: 30 },
+      { id: 83, week: "14–20 December", dateLabel: "Tue 15", fullDate: "Tue, 15 Dec 2026", subject: "Physics", chapter: "Moving Charges and Magnetism", notes: "", targetQ: 25 },
+      { id: 84, week: "14–20 December", dateLabel: "Tue 15", fullDate: "Tue, 15 Dec 2026", subject: "Biology", chapter: "Human Health and Disease", notes: "", targetQ: 40 },
+      { id: 85, week: "14–20 December", dateLabel: "Wed 16", fullDate: "Wed, 16 Dec 2026", subject: "Mock Test", chapter: "Yakeen AITS-3", notes: "Official paper", targetQ: 0 },
+      { id: 86, week: "14–20 December", dateLabel: "Thu 17", fullDate: "Thu, 17 Dec 2026", subject: "Physics", chapter: "Electromagnetic Induction", notes: "", targetQ: 30 },
+      { id: 87, week: "14–20 December", dateLabel: "Thu 17", fullDate: "Thu, 17 Dec 2026", subject: "Biology", chapter: "Organisms and Populations", notes: "", targetQ: 40 },
+      { id: 88, week: "14–20 December", dateLabel: "Fri 18", fullDate: "Fri, 18 Dec 2026", subject: "Chemistry", chapter: "Aldehydes, Ketones and Carboxylic Acids", notes: "First 20 minutes: alcohol errors from 9 Dec", targetQ: 30 },
+      { id: 89, week: "14–20 December", dateLabel: "Sat 19", fullDate: "Sat, 19 Dec 2026", subject: "Physics", chapter: "Alternating Current", notes: "", targetQ: 30 },
+      { id: 90, week: "14–20 December", dateLabel: "Sat 19", fullDate: "Sat, 19 Dec 2026", subject: "Biology", chapter: "Ecosystem", notes: "", targetQ: 40 },
+      { id: 91, week: "14–20 December", dateLabel: "Sun 20", fullDate: "Sun, 20 Dec 2026", subject: "Physics", chapter: "Electromagnetic Waves", notes: "", targetQ: 20 },
+      { id: 92, week: "14–20 December", dateLabel: "Sun 20", fullDate: "Sun, 20 Dec 2026", subject: "Chemistry", chapter: "Amines", notes: "", targetQ: 30 },
+
+      // Week 11: 21–27 December
+      { id: 93, week: "21–27 December", dateLabel: "Mon 21", fullDate: "Mon, 21 Dec 2026", subject: "Physics", chapter: "Ray Optics", notes: "Mirrors, refraction, TIR, lenses, microscope, telescope", targetQ: 30 },
+      { id: 94, week: "21–27 December", dateLabel: "Tue 22", fullDate: "Tue, 22 Dec 2026", subject: "Physics", chapter: "Wave Optics", notes: "", targetQ: 25 },
+      { id: 95, week: "21–27 December", dateLabel: "Tue 22", fullDate: "Tue, 22 Dec 2026", subject: "Chemistry", chapter: "d- and f-Block", notes: "", targetQ: 25 },
+      { id: 96, week: "21–27 December", dateLabel: "Wed 23", fullDate: "Wed, 23 Dec 2026", subject: "Chemistry", chapter: "Coordination Compounds", notes: "", targetQ: 30 },
+      { id: 97, week: "21–27 December", dateLabel: "Wed 23", fullDate: "Wed, 23 Dec 2026", subject: "Biology", chapter: "Biotechnology: Principles and Processes", notes: "", targetQ: 40 },
+      { id: 98, week: "21–27 December", dateLabel: "Thu 24", fullDate: "Thu, 24 Dec 2026", subject: "Biology", chapter: "Molecular Basis", notes: "Replication, transcription, code, translation, lac operon", targetQ: 45 },
+      { id: 99, week: "21–27 December", dateLabel: "Fri 25", fullDate: "Fri, 25 Dec 2026", subject: "Physics", chapter: "Dual Nature", notes: "Swap with Thursday if the house is busy", targetQ: 25 },
+      { id: 100, week: "21–27 December", dateLabel: "Fri 25", fullDate: "Fri, 25 Dec 2026", subject: "Biology", chapter: "Biotechnology and its Applications", notes: "", targetQ: 40 },
+      { id: 101, week: "21–27 December", dateLabel: "Sat 26", fullDate: "Sat, 26 Dec 2026", subject: "Physics", chapter: "Magnetism and Matter", notes: "", targetQ: 25 },
+      { id: 102, week: "21–27 December", dateLabel: "Sat 26", fullDate: "Sat, 26 Dec 2026", subject: "Physics", chapter: "Atoms", notes: "", targetQ: 25 },
+      { id: 103, week: "21–27 December", dateLabel: "Sun 27", fullDate: "Sun, 27 Dec 2026", subject: "Mock Test", chapter: "NRTS 11", notes: "Official paper", targetQ: 0 },
+
+      // Week 12: 28–31 December
+      { id: 104, week: "28–31 December", dateLabel: "Mon 28", fullDate: "Mon, 28 Dec 2026", subject: "Physics", chapter: "Nuclei", notes: "NRTS 11 errors first", targetQ: 25 },
+      { id: 105, week: "28–31 December", dateLabel: "Mon 28", fullDate: "Mon, 28 Dec 2026", subject: "Chemistry", chapter: "Biomolecules (Chemistry)", notes: "Chemistry book, not a reread of the biology chapter", targetQ: 25 },
+      { id: 106, week: "28–31 December", dateLabel: "Tue 29", fullDate: "Tue, 29 Dec 2026", subject: "Physics", chapter: "Semiconductors", notes: "", targetQ: 30 },
+      { id: 107, week: "28–31 December", dateLabel: "Tue 29", fullDate: "Tue, 29 Dec 2026", subject: "Chemistry", chapter: "Principles Related to Practical Chemistry", notes: "", targetQ: 20 },
+      { id: 108, week: "28–31 December", dateLabel: "Wed 30", fullDate: "Wed, 30 Dec 2026", subject: "Mock Test", chapter: "Yakeen NEET-7", notes: "Official paper", targetQ: 0 },
+      { id: 109, week: "28–31 December", dateLabel: "Thu 31", fullDate: "Thu, 31 Dec 2026", subject: "Physics", chapter: "Experimental Skills", notes: "Last chapters. Syllabus closed!", targetQ: 20 },
+      { id: 110, week: "28–31 December", dateLabel: "Thu 31", fullDate: "Thu, 31 Dec 2026", subject: "Biology", chapter: "Biodiversity and Conservation", notes: "Last chapters. Syllabus closed!", targetQ: 40 }
+    ];
+
+    // Local Storage State Management
+    const STORAGE_KEY = "neet_master_planner_state_v1";
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveState(state) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    let userState = loadState(); // format: { [taskId]: { done: boolean, qCount: number } }
+
+    let activeFilter = "all";
+    let activeSearch = "";
+
+    // DOM Elements
+    const taskFeed = document.getElementById("task-feed");
+    const percentDisplay = document.getElementById("percent-display");
+    const progressBarFill = document.getElementById("progress-bar-fill");
+    const tasksDoneDisplay = document.getElementById("tasks-done-display");
+    const questionsDoneDisplay = document.getElementById("questions-done-display");
+    const searchInput = document.getElementById("search-input");
+    const clearSearchBtn = document.getElementById("clear-search-btn");
+    const filterChips = document.querySelectorAll(".chip");
+    const resetBtn = document.getElementById("reset-btn");
+    const toast = document.getElementById("toast");
+
+    // Subject Breakdown Elements
+    const phyVal = document.getElementById("phy-val");
+    const phyCount = document.getElementById("phy-count");
+    const chemVal = document.getElementById("chem-val");
+    const chemCount = document.getElementById("chem-count");
+    const bioVal = document.getElementById("bio-val");
+    const bioCount = document.getElementById("bio-count");
+    const mockVal = document.getElementById("mock-val");
+    const mockCount = document.getElementById("mock-count");
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2000);
+    }
+
+    // Calculation & Stats Update
+    function updateStats() {
+      let totalTasks = scheduleData.length;
+      let completedTasks = 0;
+      let totalTargetQ = 0;
+      let totalPracticedQ = 0;
+
+      let subStats = {
+        Physics: { total: 0, done: 0 },
+        Chemistry: { total: 0, done: 0 },
+        Biology: { total: 0, done: 0 },
+        "Mock Test": { total: 0, done: 0 }
+      };
+
+      scheduleData.forEach(task => {
+        const state = userState[task.id] || { done: false, qCount: 0 };
+        if (state.done) completedTasks++;
+
+        totalTargetQ += task.targetQ;
+        totalPracticedQ += (state.qCount || 0);
+
+        const sub = task.subject;
+        if (subStats[sub]) {
+          subStats[sub].total++;
+          if (state.done) subStats[sub].done++;
+        }
+      });
+
+      // Overall Syllabus completion (60% chapter tasks completed + 40% target questions solved)
+      const taskPct = (completedTasks / totalTasks) * 100;
+      const qPct = totalTargetQ > 0 ? Math.min(100, (totalPracticedQ / totalTargetQ) * 100) : 0;
+      const overallPct = Math.min(100, (taskPct * 0.6) + (qPct * 0.4));
+
+      percentDisplay.textContent = overallPct.toFixed(1) + "%";
+      progressBarFill.style.width = overallPct + "%";
+      tasksDoneDisplay.textContent = `${completedTasks} / ${totalTasks} Tasks`;
+      questionsDoneDisplay.textContent = `${totalPracticedQ.toLocaleString()} / ${totalTargetQ.toLocaleString()} Qs Practiced`;
+
+      // Mini Subject Cards
+      function calcSubPct(done, total) {
+        return total > 0 ? Math.round((done / total) * 100) + "%" : "0%";
+      }
+
+      phyVal.textContent = calcSubPct(subStats.Physics.done, subStats.Physics.total);
+      phyCount.textContent = `${subStats.Physics.done}/${subStats.Physics.total}`;
+
+      chemVal.textContent = calcSubPct(subStats.Chemistry.done, subStats.Chemistry.total);
+      chemCount.textContent = `${subStats.Chemistry.done}/${subStats.Chemistry.total}`;
+
+      bioVal.textContent = calcSubPct(subStats.Biology.done, subStats.Biology.total);
+      bioCount.textContent = `${subStats.Biology.done}/${subStats.Biology.total}`;
+
+      mockVal.textContent = calcSubPct(subStats["Mock Test"].done, subStats["Mock Test"].total);
+      mockCount.textContent = `${subStats["Mock Test"].done}/${subStats["Mock Test"].total}`;
+    }
+
+    // Render Tasks Grouped by Date
+    function renderTasks() {
+      taskFeed.innerHTML = "";
+
+      const query = activeSearch.trim().toLowerCase();
+
+      // Filter tasks
+      const filtered = scheduleData.filter(task => {
+        const state = userState[task.id] || { done: false, qCount: 0 };
+
+        // Search match
+        const matchesSearch = !query ||
+          task.chapter.toLowerCase().includes(query) ||
+          task.subject.toLowerCase().includes(query) ||
+          task.notes.toLowerCase().includes(query) ||
+          task.fullDate.toLowerCase().includes(query) ||
+          task.week.toLowerCase().includes(query);
+
+        if (!matchesSearch) return false;
+
+        // Filter chip match
+        if (activeFilter === "all") return true;
+        if (activeFilter === "milestone") return !!task.isMilestone;
+        if (activeFilter === "pending") return !state.done;
+        if (activeFilter === "completed") return !!state.done;
+        return task.subject === activeFilter;
+      });
+
+      if (filtered.length === 0) {
+        taskFeed.innerHTML = `
+          <div class="empty-state">
+            <div style="font-size: 32px; margin-bottom: 8px;">🔬</div>
+            <p>No study tasks matched your search or filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Group by date string
+      const grouped = {};
+      filtered.forEach(task => {
+        const key = `${task.fullDate} • ${task.week}`;
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(task);
+      });
+
+      // Render each group
+      Object.keys(grouped).forEach(dateKey => {
+        const tasksInGroup = grouped[dateKey];
+        const groupEl = document.createElement("div");
+        groupEl.className = "date-group";
+
+        // Date Sticky Header
+        const headerEl = document.createElement("div");
+        headerEl.className = "date-header";
+
+        const doneInGroup = tasksInGroup.filter(t => (userState[t.id] && userState[t.id].done)).length;
+
+        headerEl.innerHTML = `
+          <div class="date-header-title">${dateKey}</div>
+          <div class="date-header-badge">${doneInGroup}/${tasksInGroup.length} Done</div>
+        `;
+        groupEl.appendChild(headerEl);
+
+        // Task Cards
+        tasksInGroup.forEach(task => {
+          const state = userState[task.id] || { done: false, qCount: 0 };
+          const cardEl = document.createElement("div");
+          cardEl.className = `task-card ${state.done ? 'completed' : ''} ${task.isMilestone ? 'is-milestone' : ''}`;
+          cardEl.id = `task-card-${task.id}`;
+
+          let pillClass = "pill-physics";
+          if (task.subject === "Chemistry") pillClass = "pill-chemistry";
+          else if (task.subject === "Biology") pillClass = "pill-biology";
+          else if (task.subject === "Mock Test") pillClass = "pill-mock";
+
+          let milestoneBanner = "";
+          if (task.isMilestone) {
+            milestoneBanner = `
+              <div class="milestone-banner">
+                <span>⭐</span>
+                <span>TARGET MILESTONE: 22 NOVEMBER 2026 (PHASE-1 EXAM)</span>
+              </div>
+            `;
+          }
+
+          let notesHtml = task.notes ? `<div class="task-notes">${task.notes}</div>` : "";
+
+          // Question Target / Controls
+          let questionControls = "";
+          if (task.targetQ > 0) {
+            questionControls = `
+              <div class="counter-control">
+                <button class="btn-step" onclick="adjustCount(${task.id}, -5)">−</button>
+                <input type="number" class="question-input" value="${state.qCount}" min="0" onchange="setCount(${task.id}, this.value)">
+                <span class="target-denom">/ ${task.targetQ} Qs</span>
+                <button class="btn-step" onclick="adjustCount(${task.id}, 5)">+</button>
+              </div>
+            `;
+          } else {
+            questionControls = `
+              <div style="font-size: 11px; color: var(--mock); font-weight: 700;">
+                Official Paper Test
+              </div>
+            `;
+          }
+
+          cardEl.innerHTML = `
+            ${milestoneBanner}
+            <div class="task-top-row">
+              <div class="checkbox-wrap" onclick="toggleTask(${task.id})">
+                <div class="custom-checkbox ${state.done ? 'checked' : ''}">
+                  <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+              </div>
+              <div class="task-info">
+                <div class="subject-pill ${pillClass}">${task.subject.toUpperCase()}</div>
+                <div class="task-title">${task.chapter}</div>
+                ${notesHtml}
+              </div>
+            </div>
+            <div class="task-bottom-row">
+              <div class="target-tag">Target: <b>${task.targetQ > 0 ? task.targetQ + ' Questions' : 'Full Mock Exam'}</b></div>
+              ${questionControls}
+            </div>
+          `;
+
+          groupEl.appendChild(cardEl);
+        });
+
+        taskFeed.appendChild(groupEl);
+      });
+    }
+
+    // Toggle Task Done
+    window.toggleTask = function(taskId) {
+      if (!userState[taskId]) {
+        userState[taskId] = { done: false, qCount: 0 };
+      }
+      userState[taskId].done = !userState[taskId].done;
+
+      // Auto-fill target questions if marked done and currently 0
+      const task = scheduleData.find(t => t.id === taskId);
+      if (userState[taskId].done && userState[taskId].qCount === 0 && task && task.targetQ > 0) {
+        userState[taskId].qCount = task.targetQ;
+      }
+
+      saveState(userState);
+      updateStats();
+      renderTasks();
+      showToast(userState[taskId].done ? "Chapter marked Done! ✓" : "Task updated");
+    };
+
+    // Adjust Question Count (+ / -)
+    window.adjustCount = function(taskId, delta) {
+      if (!userState[taskId]) {
+        userState[taskId] = { done: false, qCount: 0 };
+      }
+      let current = userState[taskId].qCount || 0;
+      userState[taskId].qCount = Math.max(0, current + delta);
+      saveState(userState);
+      updateStats();
+      renderTasks();
+    };
+
+    // Set Custom Question Count
+    window.setCount = function(taskId, value) {
+      if (!userState[taskId]) {
+        userState[taskId] = { done: false, qCount: 0 };
+      }
+      const parsed = parseInt(value, 10);
+      userState[taskId].qCount = isNaN(parsed) ? 0 : Math.max(0, parsed);
+      saveState(userState);
+      updateStats();
+      renderTasks();
+    };
+
+    // Search Box Listener
+    searchInput.addEventListener("input", (e) => {
+      activeSearch = e.target.value;
+      clearSearchBtn.style.display = activeSearch ? "block" : "none";
+      renderTasks();
+    });
+
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      activeSearch = "";
+      clearSearchBtn.style.display = "none";
+      renderTasks();
+    });
+
+    // Filter Chips Listener
+    filterChips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        filterChips.forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        activeFilter = chip.getAttribute("data-filter");
+        renderTasks();
+      });
+    });
+
+    // Reset Progress Listener
+    resetBtn.addEventListener("click", () => {
+      if (confirm("Reset all checked chapters and question counts?")) {
+        userState = {};
+        saveState(userState);
+        updateStats();
+        renderTasks();
+        showToast("Progress reset successfully");
+      }
+    });
+
+    // Initial Load
+    updateStats();
+    renderTasks();
+  </script>
+</body>
+</html>
